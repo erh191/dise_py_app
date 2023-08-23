@@ -130,8 +130,8 @@ class MainWindow(QObject):
 		baudrate = int(speed)
 		try: 
 			self.ser = serial.Serial(
-				port,
-				baudrate,
+				port="COM4",
+				baudrate=115200,
 				timeout=1,
 				parity=serial.PARITY_NONE,
 				stopbits=serial.STOPBITS_ONE,
@@ -165,6 +165,21 @@ class MainWindow(QObject):
 	# READ DATA FROM ARDUINO, ANALOGS AIN  & DIGITALS IN.
 	####################################################################
 	def readData(self):
+		packet_received=0
+		index=0
+		if self.comSerialok:
+			data = self.ser.read(1)
+			print("dato=")
+			print(data)
+			while packet_received==0:
+				data = data + self.ser.read(1)
+				index=index+1
+				print(index)
+				if data[index-1]==0xfb:
+					if data[index-2]==0xfa:
+						packet_received=1
+			print("paquete=")
+			print(data)
 		
 		self.adc1 = 10
 		self.adc2 = 88
