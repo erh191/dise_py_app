@@ -933,7 +933,7 @@ Item {
 
                 interactive: false
                 minValue: 0
-                maxValue: 100
+                maxValue: 8000
                 value: 0.5//inputSlider.value
                 startAngle: 0
                 endAngle: 270
@@ -1108,7 +1108,7 @@ Item {
 			gauge2.value = backend.get_adc2()/5
 			gauge3.value = backend.get_adc3()/5
 			slider.value = backend.get_adc4()/85
-			progressIndicator.value = backend.get_adc5()/10
+			progressIndicator.value = backend.get_adc5()
 			customSlider.value = backend.get_adc6()
 		}
 	}
