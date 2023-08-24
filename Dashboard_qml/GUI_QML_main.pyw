@@ -18,6 +18,15 @@ import random
 import math
 import serial.tools.list_ports
 
+#RX CAN Messages ID's
+CAN_ID_EMERGENCY_LIGHTS	=	0x171
+CAN_ID_MOTOR_PULSES		=	0x120
+CAN_ID_DIGITAL_INPUTS	=	0x140
+CAN_ID_TEMPERATURE		=	0x180
+
+#TX CAN Messages ID's
+MSG_ELIGHTS_RX_ID		=	0x170
+
 ########################################################################
 ###### MAIN CLASS
 ########################################################################
@@ -160,6 +169,8 @@ class MainWindow(QObject):
 		self.temporizador = QTimer()
 		self.temporizador.timeout.connect(self.readData)
 		self.temporizador.start(1)
+
+	
 	
 	####################################################################
 	# READ DATA FROM ARDUINO, ANALOGS AIN  & DIGITALS IN.
@@ -176,7 +187,7 @@ class MainWindow(QObject):
 					if data[index-2]==0xfa:
 						packet_received=1
 						print("paquete recibido!!!!")
-			#print("paquete="+str(data))
+
 			if data[0]==0xfc:
 				if data[1]==0xfd:
 					can_id=data[3]*256+data[2]
@@ -188,9 +199,71 @@ class MainWindow(QObject):
 					can_data_index=10
 					can_data=data[can_data_index:can_data_index+can_dlc]
 					print("can_data="+str(can_data))
-					#print("can_data[0]="+str(can_data[0]))
 
+					if can_id==CAN_ID_EMERGENCY_LIGHTS:
+						print("CAN_ID_EMERGENCY_LIGHTS")
+						Din0=can_data[0]
+						self.digitalsIn0 = Din0&1
+
+					if can_id==CAN_ID_MOTOR_PULSES:		
+						print("CAN_ID_MOTOR_PULSES")
+						pulses=can_data[1]*256+can_data[0]
+						self.adc5 = pulses
+						self.adc5 = self.adc5 *15
+						print("pulses="+str(self.adc5))
+
+					if can_id==CAN_ID_DIGITAL_INPUTS:
+						print("CAN_ID_DIGITAL_INPUTS")
+						ignition=can_data[0]&0x02
+						door	=can_data[0]&0x01
+						
+						if ignition:
+							self.digitalsIn1 = 1
+						else:
+							self.digitalsIn1 = 0
+
+						if door:
+							self.digitalsIn2 = 1
+						else:
+							self.digitalsIn2 = 0
+						gear=0
+						if can_data[1] ==1 :
+							gear	=100
+						if can_data[1] ==2 :
+							gear	=400
+						
+						if can_data[1] ==4 :
+							gear	=800
+						self.adc6 = gear
+						self.adc4 = gear
+						self.adc3 = gear
+						self.adc2 = gear
+						self.adc1 = gear
 					
+
+						print("gear"+str(self.adc6))
+						
+							
+
+						
+
+
+					if can_id==CAN_ID_TEMPERATURE:
+						print("CAN_ID_TEMPERATURE")
+
+
+
+					self.adc1 = 10
+					self.adc2 = 88
+					self.adc3 = 30
+					self.adc4 = 40
+					self.adc6 = 60
+					self.adc7 = 70
+					self.adc8 = 80
+
+
+
+
 
 
 				else:
@@ -198,17 +271,7 @@ class MainWindow(QObject):
 			else:
 				print("err1")
 
-			
-
-
-		self.adc1 = 10
-		self.adc2 = 88
-		self.adc3 = 30
-		self.adc4 = 40
-		self.adc5 = 4000
-		self.adc6 = 60
-		self.adc7 = 70
-		self.adc8 = 80
+		
 
 	def readData1(self):
 		print("read data")
