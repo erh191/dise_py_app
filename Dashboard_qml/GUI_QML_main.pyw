@@ -159,7 +159,7 @@ class MainWindow(QObject):
 	def iniSampler(self):
 		self.temporizador = QTimer()
 		self.temporizador.timeout.connect(self.readData)
-		self.temporizador.start(200)
+		self.temporizador.start(1)
 	
 	####################################################################
 	# READ DATA FROM ARDUINO, ANALOGS AIN  & DIGITALS IN.
@@ -169,18 +169,59 @@ class MainWindow(QObject):
 		index=0
 		if self.comSerialok:
 			data = self.ser.read(1)
-			print("dato=")
-			print(data)
 			while packet_received==0:
 				data = data + self.ser.read(1)
 				index=index+1
-				print(index)
 				if data[index-1]==0xfb:
 					if data[index-2]==0xfa:
 						packet_received=1
-			print("paquete=")
-			print(data)
-		
+						print("paquete recibido!!!!")
+			#print("paquete="+str(data))
+			if data[0]==0xfc:
+				if data[1]==0xfd:
+					can_id=data[3]*256+data[2]
+					print("can_id="+str(can_id))
+					
+					can_dlc=data[6]
+					print("can_dlc="+str(can_dlc))
+
+					can_data_index=10
+					can_data=data[can_data_index:can_data_index+can_dlc]
+					print("can_data="+str(can_data))
+					#print("can_data[0]="+str(can_data[0]))
+
+					
+
+
+				else:
+					print("err2")	
+			else:
+				print("err1")
+
+			
+
+
+		self.adc1 = 10
+		self.adc2 = 88
+		self.adc3 = 30
+		self.adc4 = 40
+		self.adc5 = 4000
+		self.adc6 = 60
+		self.adc7 = 70
+		self.adc8 = 80
+
+	def readData1(self):
+		print("read data")
+		if self.comSerialok:
+			data = self.ser.read(1)
+			n = self.ser.inWaiting()
+			while n:
+				print("read="+str(self.ser.read(n)))
+				#data = data + self.ser.read(n)
+				n = self.ser.inWaiting()
+				print("n="+str(n))
+			print("data"+str(data))
+			
 		self.adc1 = 10
 		self.adc2 = 88
 		self.adc3 = 30
