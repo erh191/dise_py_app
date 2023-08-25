@@ -232,11 +232,11 @@ class MainWindow(QObject):
 								self.digitalsIn2 = 0
 							gear=0
 							if can_data[1] ==1 :#REVERSE
-								gear	=100
+								gear	=1
 							if can_data[1] ==2 :#NEUTRAL
-								gear	=400						
+								gear	=2						
 							if can_data[1] ==4 :#DRIVE
-								gear	=800
+								gear	=4
 							self.adc4 = gear				
 
 							print("gear"+str(self.adc6))					

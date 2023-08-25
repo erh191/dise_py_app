@@ -15,7 +15,7 @@ import QtGraphicalEffects 1.0
 import "../controls"
 
 Item {
-	property int din6status: 0
+	property int gear_status: 0
 
 	Rectangle {
 		id: rectangle
@@ -868,143 +868,14 @@ Item {
             border.color: "#fefefe"
             border.width: 4
             //radius: width / 2
-        }
-
-		Rectangle {
-			anchors.left : parent.left
-			anchors.leftMargin: 15
-			y: 10
-			width: 0.26*parent.width
-			height: 0.13*parent.width
-			color: "#00000000"
-			Button {
-				id: reverse
-				QtObject{
-					property color colorDefault: "#CBCBCB"
-					property color colorMouseOver: "#5F5F5F"
-					property color colorPressed: "#707070"
-					id: internalReverse
-					property var dynamicColor:
-					if(reverse.down){
-						reverse.down ? colorPressed : colorDefault
-					} else {
-						reverse.hovered ? colorMouseOver : colorDefault
-					}
-				}
-				anchors.left : parent.left
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
-				implicitWidth: 60
-				implicitHeight: 50
-					x: 400
-					y: 100
-					background: Rectangle {
-						color: internalReverse.dynamicColor
-				}
-
-				Text {
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: 10
-					text: "R"
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.2)
-					color: "#FE2D00"
-				}
-			}
-
-		}
-
-		Rectangle {
-			anchors.left : parent.left
-			anchors.leftMargin: 150
-			y: 10
-			width: 0.26*parent.width
-			height: 0.13*parent.width
-			color: "#00000000"
-			Button {
-				id: neutral
-				QtObject{
-					property color colorDefault: "#CBCBCB"
-					property color colorMouseOver: "#5F5F5F"
-					property color colorPressed: "#707070"
-					id: internalNeutral
-					property var dynamicColor:
-					if(neutral.down){
-						neutral.down ? colorPressed : colorDefault
-					} else {
-						neutral.hovered ? colorMouseOver : colorDefault
-					}
-				}
-				anchors.left : parent.left
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
-				implicitWidth: 60
-				implicitHeight: 50
-					x: 600
-					y: 100
-					background: Rectangle {
-						color: internalNeutral.dynamicColor
-				}
-
-				Text {
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: 10
-					text: "N"
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.2)
-					color: "#FE2D00"
-				}
-			}
-		}
-
-		Rectangle {
-			anchors.left : parent.left
-			anchors.leftMargin: 280
-			y: 10
-			width: 0.26*parent.width
-			height: 0.13*parent.width
-			Button {
-				id: drive
-				QtObject{
-					property color colorDefault: "#CBCBCB"
-					property color colorMouseOver: "#5F5F5F"
-					property color colorPressed: "#707070"
-					id: internalDrive
-					property var dynamicColor:
-					if(drive.down){
-						drive.down ? colorPressed : colorDefault
-					} else {
-						drive.hovered ? colorMouseOver : colorDefault
-					}
-				}
-				anchors.left : parent.left
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
-				implicitWidth: 60
-				implicitHeight: 50
-					x: 600
-					y: 100
-					background: Rectangle {
-						color: internalDrive.dynamicColor
-				}
-
-				Text {
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: 10
-					text: "D"
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.2)
-					color: "#FE2D00"
-				}
-			}
-		}
+        }		
     }
 
 	Label {
 		id: textain7
-        text: din6status ==1 ? "OPEN" : "CLOSE"
+        text: gear_status ==1 ? "R" : gear_status ==2 ? "N":gear_status ==4 ? "D":"E"
         color: "#00A5FF"
-        font.pointSize: 16
+        font.pointSize: 64
         anchors.bottom: gauge4.top
     	anchors.bottomMargin: 15
         anchors.horizontalCenter: parent.horizontalCenter
@@ -1021,7 +892,7 @@ Item {
 			
 			progressIndicator.value = backend.get_adc5()//RPMS
 			gauge2.value = progressIndicator.value/100
-			din6status=1
+			gear_status=backend.get_adc4()
 			//gauge3.value = backend.get_adc3()/5
 			//slider.value = backend.get_adc4()/85
 		}
