@@ -180,33 +180,33 @@ class MainWindow(QObject):
 		index=0
 		#print("waiting"+str(self.ser.in_waiting))
 		if self.comSerialok:
-			if self.ser.in_waiting>=9:
+			if self.ser.in_waiting>=9:#have bytes in the serial buffer?
 				data = self.ser.read(1)
-				while packet_received==0:
+				while packet_received==0:#wait to detect end of frame
 					data = data + self.ser.read(1)
 					index=index+1
-					if index >= 25:
-						packet_received=255
+					if index >= 25:#if not detect end of frame
+						packet_received=255# exit while
 					if data:
-						if index > 2:
+						if index > 2:#end of frame is 0xfb, 0xfa
 							if data[index-1]==0xfb:
 								if data[index-2]==0xfa:
 									packet_received=1
 									#print("paquete recibido!!!!")
-				if	self.ser.in_waiting>=128:
-					self.ser.reset_input_buffer()
+				if	self.ser.in_waiting>=128: #if are more of 128 bytes in input buffer
+					self.ser.reset_input_buffer()#Discard bytes in input buffer
 					print("flush input serial bytes!!!!!!!!!!!!!!!!1")
-				if packet_received == 1:
+				if packet_received == 1:#end of frame detected, packet received
 					if data[0]==0xfc:
-						if data[1]==0xfd:
-							can_id=data[3]*256+data[2]
+						if data[1]==0xfd:#bytes of start frame are 0xfc,0xfd
+							can_id=data[3]*256+data[2]#read can id
 							#print("can_id="+str(can_id))
 							
-							can_dlc=data[4]
+							can_dlc=data[4]#read can dlc
 							#print("can_dlc="+str(can_dlc))
 
-							can_data_index=5
-							can_data=data[can_data_index:can_data_index+can_dlc]
+							can_data_index=5#index of can_data[0]
+							can_data=data[can_data_index:can_data_index+can_dlc]#read dlc bytes
 							#print("can_data="+str(can_data))
 
 							if can_id==CAN_ID_EMERGENCY_LIGHTS:
@@ -217,7 +217,7 @@ class MainWindow(QObject):
 							if can_id==CAN_ID_MOTOR_PULSES:		
 								pulses=can_data[1]*256+can_data[0]
 								self.adc5 = pulses
-								self.adc5 = self.adc5 *15
+								self.adc5 = self.adc5 * 30
 								#print("CAN_ID_MOTOR_PULSES= "+str(self.adc5))
 
 							if can_id==CAN_ID_DIGITAL_INPUTS:
