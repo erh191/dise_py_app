@@ -28,7 +28,7 @@ Item {
 		width: 220
         height: 220
         anchors.top : parent.top
-        anchors.topMargin: 30
+        anchors.topMargin: 240
         anchors.left : parent.left
         anchors.leftMargin: 40
         visible: true
@@ -229,15 +229,14 @@ Item {
 					id:textgauge1a
 					anchors.horizontalCenter: parent.horizontalCenter
 					y: -10
-					text: "kw"
+					text: "°C"
 					font.family: "Helvetica"
 					font.pointSize: Math.max(6, parent.width * 0.4)
 					color: "#e5e5e5"
 				}
 			}
-
 			Label {
-                text: "AI 0"
+                text: "Motor Temp"
                 color: "#00A5FF"
                 font.pointSize: 16
                 anchors.bottom: gauge1.top
@@ -254,12 +253,12 @@ Item {
 	// ############## INI GAUGE 2  #####################################
 	Rectangle {
 		id:rect2
-		width: 220
-        height: 220
+		width: 355
+        height: 355
         anchors.top : parent.top
-        anchors.topMargin: 30
+        anchors.topMargin: 150
         anchors.left : parent.left
-        anchors.leftMargin: 300
+        anchors.leftMargin: 260
         visible: true
         color: "#00000000"
 		
@@ -469,7 +468,7 @@ Item {
 				}
 			}
 			Label {
-                text: "AI 1"
+                text: "Speed"
                 color: "#00A5FF"
                 font.pointSize: 16
                 anchors.bottom: gauge2.top
@@ -481,447 +480,13 @@ Item {
 	}
 	// ############## FIN GAUGE  2  ####################################
 	
-	////////////////////////////////////////////////////////////////////
-	
-		// ############## INI GAUGE 3  #####################################
-	Rectangle {
-		id:rect3
-		width: 220
-        height: 220
-        anchors.top : parent.top
-        anchors.topMargin: 30
-        anchors.left : parent.left
-        anchors.leftMargin: 550
-        visible: true
-        color: "#00000000"
-		//###### Shader effect to provide gradient-based gauge #########
-		ShaderEffect {
-			id: shader3
-			antialiasing: true
-			anchors.fill: parent
-			opacity: 0.95  
-			property real angleBase: -pi*0.80
-			property real angle: ((1.6*pi*(gauge3.value)/(gauge3.maximumValue-gauge3.minimumValue))+pi*(0.8-(1.6*gauge3.maximumValue/(gauge3.maximumValue-gauge3.minimumValue))))
-			// ANGLE= [1.6*PI*(MEASURE)/(MAX-MIN)]+PI*(0.8-(1.6*MAX/(MAX-MIN)))
-			readonly property real pi: 3.1415926535897932384626433832795
-			vertexShader: "
-			uniform highp mat4 qt_Matrix;
-			attribute highp vec4 qt_Vertex;
-			attribute highp vec2 qt_MultiTexCoord0;
-			varying highp vec2 coord;
-			
-			void main() {
-				coord = qt_MultiTexCoord0;
-				gl_Position = qt_Matrix * qt_Vertex;
-				}"
-
-			fragmentShader: "
-			uniform lowp float qt_Opacity;
-			uniform highp float angleBase;
-			uniform highp float angle;
-			varying highp vec2 coord;
-			void main() {
-				gl_FragColor = vec4(0.0,0.0,0.0,0.0); 
-				highp vec2 d=2.0*coord-vec2(1.0,1.0);
-				highp float r=length(d);
-				if (0.45<=r && r<=0.55) {
-					highp float a=atan(d.x,-d.y);
-					if (angleBase<=a && a<=angle) {
-						highp float p=(a-angleBase)/(angle-angleBase);
-						gl_FragColor = vec4(0.4+0.6*p,0,0,p) * qt_Opacity;
-						}
-					}
-				}"
-			}
-		//##### END Shader effect  #####################################
-		CircularGauge {
-			
-			Behavior on value {
-				NumberAnimation {
-					duration: 900
-				}
-			}
-			id: gauge3
-			width: 0.9*rect3.width
-			height: 0.9*rect3.width
-			maximumValue: 200
-			minimumValue: 0
-			value: 100
-			anchors.centerIn: parent
-			style: CircularGaugeStyle {
-				id: style3
-				labelInset: outerRadius * 0.01
-				labelStepSize: 20
-				minorTickmarkInset :25
-				tickmarkInset : 14
-				minorTickmarkCount : 5
-				tickmarkStepSize : 20
-				function degreesToRadians(degrees) {
-					return degrees * (Math.PI / 180);
-				}
-
-				background: Canvas {
-				
-					onPaint: {
-						var ctx = getContext("2d");
-						ctx.reset();
-						/*
-						ctx.beginPath();
-						ctx.strokeStyle = "#ff8000";
-						ctx.lineWidth = outerRadius * 0.1;
-						ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth / 2,degreesToRadians(valueToAngle(20) - 90), degreesToRadians(valueToAngle(50) - 90));
-						ctx.stroke();
-						ctx.beginPath();
-						ctx.strokeStyle = "#ffff00";
-						ctx.lineWidth = outerRadius * 0.05;
-						ctx.arc(outerRadius, outerRadius, 0.75*outerRadius - ctx.lineWidth / 2,degreesToRadians(valueToAngle(20) - 90), degreesToRadians(valueToAngle(50) - 90));
-						ctx.stroke();
-						
-						ctx.beginPath();
-						ctx.strokeStyle = "#f0f0f0";
-						ctx.lineWidth = outerRadius * 0.03;
-						ctx.arc(outerRadius, outerRadius, 1*outerRadius - ctx.lineWidth / 2,degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(gauge3.maximumValue) - 90));
-						ctx.stroke();
-						
-						ctx.beginPath();
-						ctx.strokeStyle = "#f0f0f0";
-						ctx.lineWidth = outerRadius * 0.03;
-						ctx.arc(outerRadius, outerRadius, 0.67*outerRadius - ctx.lineWidth / 2,degreesToRadians(valueToAngle(0) - 90), degreesToRadians(valueToAngle(gauge3.maximumValue) - 90));
-						ctx.stroke();
-						*/
-						
-					}
-				}
-
-				
-				tickmark: Rectangle {
-					visible: styleData.value >= 0  //|| styleData.value % 20 == 0  // styleData.value < 3 || 
-					implicitWidth: outerRadius * 0.03
-					antialiasing: true
-					implicitHeight: outerRadius * 0.2
-					color: styleData.value <= 50 ? "#ffff00" : "#ffff00"
-				}
-				
-
-				minorTickmark: Rectangle {
-					visible: styleData.value > 0 //styleData.value < 20  //|| styleData.value % 1 == 0
-					implicitWidth: outerRadius * 0.01
-					antialiasing: true
-					implicitHeight: outerRadius * 0.1
-					color: styleData.value <= 40 ? "#00ff00" : "#00ff00"
-				}
-
-				tickmarkLabel:  Text {
-					visible: styleData.value >= 0
-					font.pixelSize: Math.max(6, outerRadius * 0.15)
-					text: styleData.value
-					color: styleData.value <= 40 ? "#e0e0e0" : "#e0e0e0"
-					antialiasing: true
-				}
-				//#################
-				needle: Canvas {
-					property real needleBaseWidth: 10
-					property real needleLength: outerRadius*0.7
-					property real needleTipWidth: 1
-					property real needleShort: outerRadius*0.01
-					implicitWidth: needleBaseWidth
-					implicitHeight: needleLength
-
-					property real xCenter: width / 2
-					property real yCenter: height / 2
-
-					onPaint: {
-						var ctx = getContext("2d");
-						ctx.reset();
-
-						ctx.beginPath();
-						ctx.moveTo(xCenter, height-needleShort);
-						ctx.lineTo(xCenter - needleBaseWidth / 2, (height-needleShort) - needleBaseWidth / 2);
-						ctx.lineTo(xCenter - needleTipWidth / 2, 0);
-						//ctx.lineTo(xCenter, yCenter - needleLength-needleShort);
-						ctx.lineTo(xCenter, 0);
-						ctx.closePath();
-						ctx.fillStyle = Qt.rgba(0, 0.9, 0, 0.9);
-						ctx.fill();
-
-						
-						ctx.beginPath();
-						ctx.moveTo(xCenter, height-needleShort)
-						ctx.lineTo(width, height-needleShort - needleBaseWidth / 2);
-						ctx.lineTo(xCenter + needleTipWidth / 2, 0);
-						ctx.lineTo(xCenter, 0);
-						ctx.closePath();
-						ctx.fillStyle = Qt.lighter(Qt.rgba(0, 0.7, 0, 0.9));
-						ctx.fill();
-						
-					}
-				}
-				//##################
-				/*
-				needle: Rectangle {
-					y: outerRadius * -0.3
-					implicitWidth: outerRadius * 0.05
-					implicitHeight: outerRadius * 0.7
-					antialiasing: true
-					color: "#00ff00"
-				}
-				*/
-				foreground: Item {
-					Rectangle {
-					}
-				}
-
-			}
-			Rectangle {
-				id:rectsg3
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter 
-				//y: 220
-				width: 0.26*gauge3.width
-				height: 0.13*gauge3.width
-				color: "#00000000"
-				Text {
-					id:textgauge3
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: 70
-					text: Math.floor(gauge3.value)
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.4)
-					color: "#e5e5e5"
-				}
-			}
-			//
-			Rectangle {
-				id:rectsg3a
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter 
-				//y: 220
-				width: 0.26*gauge3.width
-				height: 0.13*gauge3.width
-				color: "#00000000"
-				Text {
-					id:textgauge3a
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: -10
-					text: "IA"
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.4)
-					color: "#e5e5e5"
-				}
-			}
-			Label {
-                text: "AI 3"
-                color: "#00A5FF"
-                font.pointSize: 16
-                anchors.bottom: gauge3.top
-                anchors.bottomMargin: 10
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-		}
-	
-	}
-	// ############## FIN GAUGE  3  ####################################
-	////////////////
 	Rectangle {
         width: 200
         height: 200
         anchors.top : parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: 250
         anchors.left : parent.left
-        anchors.leftMargin: 50
-        visible: true
-        color: "#00000000"
-		
-		CircularSlider {
-            id: slider
-
-            handleVerticalOffset: -30
-            trackWidth: 5
-            trackColor: "#FEFEFE"
-            width: parent.width
-            height: parent.height
-            minValue: 0
-            maxValue: 12
-            //value: customSlider.value*12
-            snap: true
-            stepSize: 1
-            hideProgress: true
-            hideTrack: true
-            interactive: false
-            Behavior on value {
-				NumberAnimation {
-					duration: 900
-				}
-			}
-
-            /// Custom Handle
-            handle: Item {
-                id: item
-
-                width: 24
-                height: 24
-
-                Shape {
-                    anchors.fill: parent
-                    rotation: 180
-
-                    ShapePath {
-                        strokeWidth: 1
-                        strokeColor: "#FF5555"
-                        fillColor: "#FF5555"
-                        startX: item.width / 2
-                        startY: 0
-
-                        PathLine { x: 0; y: item.height }
-                        PathLine { x: item.width; y: item.height }
-                        PathLine { x: item.width/2; y: 0 }
-                    }
-                }
-
-                transform: Translate {
-                    x: (slider.handleWidth - width) / 2
-                    y: (slider.handleHeight - height) / 2
-                }
-            }
-
-/*
-            Repeater {
-                model: 6
-
-                delegate: Rectangle {
-                    anchors.centerIn: parent
-                    height: slider.height
-                    width: 1
-                    color: "#191919"
-                    transform: Rotation {
-                        origin.x: 1
-                        origin.y: slider.height / 2
-                        angle: 30 * index
-                    }
-                }
-            }
-*/
-            /// Inner Trinagle
-            Shape {
-                id: triangle
-                width: 20
-                height: parent.height / 2
-                x: (parent.width - width ) / 2
-                y: 0
-                transform: Rotation {
-                    origin.x: triangle.width / 2
-                    origin.y: triangle.height
-                    angle: slider.angle
-                }
-
-                ShapePath {
-                    strokeWidth: 1
-                    strokeColor: "#50FA7B"
-                    fillColor: "#50FA7B"
-                    startX: triangle.width / 2
-                    startY: 0
-
-                    PathLine { x: 0; y: triangle.height }
-                    PathLine { x: triangle.width; y: triangle.height }
-                    PathLine { x: triangle.width/2; y: 0 }
-                }
-            }
-
-            /// Inner Circle
-            Rectangle {
-                color: "#232323"
-                width: 120
-                height: width
-                radius: width / 2
-                anchors.centerIn: parent
-
-                Label {
-                    anchors.centerIn: parent
-                    font.pointSize: 20
-                    color: "#FEFEFE"
-                    text: slider.value === 0 ? Number(12) : Number((slider.value).toFixed(1)).toString().padStart(1, '0')
-                }
-            }
-
-            /// Outer Dial
-            Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-                border.color: "#fefefe"
-                border.width: 4
-                radius: width / 2
-            }
-
-            /// Numbers
-            Label {
-                text: "12"
-                color: "#fefefe"
-                font.pointSize: 16
-                anchors.bottom: slider.top
-                anchors.bottomMargin: 1
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            Label {
-                text: "3"
-                color: "#fefefe"
-                font.pointSize: 16
-                anchors.left: slider.right
-                anchors.leftMargin: 5
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Label {
-                text: "6"
-                color: "#fefefe"
-                font.pointSize: 16
-                anchors.top: slider.bottom
-                anchors.topMargin: 1
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            Label {
-                text: "9"
-                color: "#fefefe"
-                font.pointSize: 16
-                anchors.right: slider.left
-                anchors.rightMargin: 5
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
-        Rectangle {
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.verticalCenter: parent.verticalCenter 
-			//y: 220
-			width: 0.26*parent.width
-			height: 0.13*parent.width
-			color: "#00000000"
-			Text {
-				anchors.horizontalCenter: parent.horizontalCenter
-				y: 0.6*parent.width
-				text: "MKS"
-				font.family: "Helvetica"
-				font.pointSize: Math.max(6, parent.width * 0.2)
-				color: "#e5e5e5"
-			}
-		}
-		Label {
-			text: "AI 4"
-			color: "#00A5FF"
-			font.pointSize: 16
-			anchors.bottom: slider.top
-			anchors.bottomMargin: 30
-			anchors.horizontalCenter: parent.horizontalCenter
-		}
-    }    
-	////////////////
-	Rectangle {
-        width: 200
-        height: 200
-        anchors.top : parent.top
-        anchors.topMargin: 300
-        anchors.left : parent.left
-        anchors.leftMargin: 310
+        anchors.leftMargin: 620
         visible: true
         color: "#00000000"
         CircularSlider {
@@ -930,7 +495,6 @@ Item {
                 hideTrack: true
                 width: parent.width
                 height: parent.height
-
                 interactive: false
                 minValue: 0
                 maxValue: 100
@@ -941,7 +505,6 @@ Item {
 
                 Repeater {
                     model: 72
-
                     Rectangle {
                         id: indicator
                         width: 5
@@ -988,38 +551,35 @@ Item {
 				}
 			}
 			Label {
-				text: "AI 5"
+				text: "RPM"
 				color: "#00A5FF"
 				font.pointSize: 16
 				anchors.bottom: progressIndicator.top
 				anchors.bottomMargin: 10
 				anchors.horizontalCenter: parent.horizontalCenter
-				}
+			}
         }
-	/////////////////
+		/////////hazard lights////////
 	Rectangle {
-        width: 200
-        height: 200
+        width: 100
+        height: 100
         anchors.top : parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: 25
         anchors.left : parent.left
-        anchors.leftMargin: 560
+        anchors.leftMargin: 390
         visible: true
         color: "#00000000"
         CircularSlider {
-            id: customSlider
             hideProgress: true
             hideTrack: true
             width: parent.width
             height: parent.height
-
             handleColor: "#6272A4"
             handleWidth: 32
             handleHeight: 32
             minValue: 0
             maxValue: 1000
             interactive: false
-            
             Behavior on value {
 				NumberAnimation {
 					duration: 900
@@ -1033,7 +593,7 @@ Item {
                 Rectangle{
                     id: mask
                     anchors.fill: parent
-                    radius: width / 2
+                    radius: width / 4
                     color: "#282A36"
                     border.width: 5
                     border.color: "#44475A"
@@ -1043,60 +603,411 @@ Item {
                     anchors.fill: mask
                     anchors.margins: 5
                     layer.enabled: true
-                    rotation: customSlider.value / 10 - 50
                     layer.effect: OpacityMask {
                         maskSource: mask
                     }
-                    Rectangle {
-                        height: parent.height  //customSlider.value / customSlider.maxValue
+                    Button {
+						id: lightsButton
+						QtObject{
+							property color colorDefault: "#D0D0D0"
+							property color colorMouseOver: "#E4E4E4"
+							property color colorPressed: "#7C7C7C"
+							id: internal
+							property var dynamicColor:
+							if(lightsButton.down){
+								lightsButton.down ? colorPressed : colorDefault
+							} else {
+								lightsButton.hovered ? colorMouseOver : colorDefault
+							}
+						}
+                        height: parent.height
                         width: parent.width
-                        color:"#5B99A6"
+						background: Rectangle {
+							color: internal.dynamicColor
+						}
                     }
-                    Image {
+					Image {
                         id: icon1
                         anchors.fill: parent
-                        source: "../../images/svg_images/avion.png"
-                        }
+                        source: "../../images/svg_images/hazard_lights.png"
+                    }
                 }
 
-                Label {
-                    //anchors.centerIn: parent
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: 0.1*parent.width
-                    font.pointSize: 20
-                    color: "#404040"
-                    //text: Number(customSlider.value).toFixed()
-                    text: Number(Math.abs(customSlider.value/10-50)).toFixed()
-                }
-                Rectangle {
-					anchors.horizontalCenter: parent.horizontalCenter
-					anchors.verticalCenter: parent.verticalCenter 
-					//y: 220
-					width: 0.26*parent.width
-					height: 0.13*parent.width
-					color: "#00000000"
-					Text {
-						anchors.horizontalCenter: parent.horizontalCenter
-						y: parent.width
-						text: "Degrees"
-						font.family: "Helvetica"
-						font.pointSize: Math.max(6, parent.width * 0.2)
-						color: "#404040"
-					}
-				}
             }
-            Label {
-                text: "AI 6"
-                color: "#00A5FF"
-                font.pointSize: 16
-                anchors.bottom: customSlider.top
-                anchors.bottomMargin: 10
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+
         }
     }
-	/////////
-	}
+	Rectangle {
+        width: 140
+        height: 140
+        anchors.top : parent.top
+        anchors.topMargin: 25
+        anchors.left : parent.left
+        anchors.leftMargin: 80
+        visible: true
+        color: "#00000000"
+		
+		CircularSlider {
+            id: slider3
+            handleVerticalOffset: -30
+            trackWidth: 5
+            trackColor: "#FEFEFE"
+            width: parent.width
+            height: parent.height
+            minValue: 0
+            maxValue: 12
+            //value: customSlider.value*12
+            snap: true
+            stepSize: 1
+            hideProgress: true
+            hideTrack: true
+            interactive: false
+            Behavior on value {
+				NumberAnimation {
+					duration: 900
+				}
+			}
+            /// Custom Handle
+            handle: Item {
+                id: item3
+                width: 24
+                height: 24
+                Shape {
+                    anchors.fill: parent
+                    rotation: 180
+                    ShapePath {
+                        strokeWidth: 1
+                        strokeColor: "#FF5555"
+                        fillColor: "#FF5555"
+                        startX: item.width / 2
+                        startY: 0
+
+                        PathLine { x: 0; y: item.height }
+                        PathLine { x: item.width; y: item.height }
+                        PathLine { x: item.width/2; y: 0 }
+                    }
+                }
+                transform: Translate {
+                    x: (slider3.handleWidth - width) / 2
+                    y: (slider3.handleHeight - height) / 2
+                }
+            }
+            /// Inner Circle
+            Rectangle {
+                color: "#232323"
+                width: 140
+                height: width
+                radius: width / 2
+                anchors.centerIn: parent
+            }
+            /// Outer Dial
+            Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+                border.color: "#fefefe"
+                border.width: 4
+                radius: width / 2
+            }
+        }
+		Button {
+			QtObject{
+				property color colorDefault: "#232323"
+				property color colorMouseOver: "#5F5F5F"
+				property color colorPressed: "#707070"
+				id: internalEngine
+				property var dynamicColor:
+				if(engine.down){
+					engine.down ? colorPressed : colorDefault
+				} else {
+					engine.hovered ? colorMouseOver : colorDefault
+				}
+			}
+			id: engine
+			anchors.horizontalCenter: parent.horizontalCenter
+			anchors.verticalCenter: parent.verticalCenter
+			implicitWidth: 100
+			implicitHeight: 70
+				x: 400
+				y: 475
+				background: Rectangle {
+                width: 130
+                height: width
+                radius: width / 2
+                anchors.centerIn: parent
+				color: internalEngine.dynamicColor
+			}
+		}
+        Rectangle {
+			anchors.horizontalCenter: parent.horizontalCenter
+			anchors.verticalCenter: parent.verticalCenter 
+			//y: 220
+			width: 0.26*parent.width
+			height: 0.13*parent.width
+			color: "#00000000"
+			Text {
+				anchors.horizontalCenter: parent.horizontalCenter
+				y: 0.080
+				text: "Start/Stop"
+				font.family: "Helvetica"
+				font.pointSize: Math.max(6, parent.width * 0.2)
+				color: "#e5e5e5"
+			}
+			Text {
+				//anchors.horizontalCenter: parent.horizontalCenter
+				y: 20
+				text: "Engine"
+				font.family: "Helvetica"
+				font.pointSize: Math.max(6, parent.width * 0.2)
+				color: "#e5e5e5"
+			}
+		}
+    }
+	/////////open door indicator////////
+	Rectangle {
+        width: 75
+        height: 75
+        anchors.top : parent.top
+        anchors.topMargin: 55
+        anchors.left : parent.left
+        anchors.leftMargin: 680
+        visible: true
+        color: "#00000000"
+        CircularSlider {
+            id: customSlider2
+            hideProgress: true
+            hideTrack: true
+            width: parent.width
+            height: parent.height
+
+            handleColor: "#6272A4"
+            handleWidth: 32
+            handleHeight: 32
+            minValue: 0
+            maxValue: 1000
+            interactive: false
+            Behavior on value {
+				NumberAnimation {
+					duration: 900
+				}
+			}
+
+            // Custom progress Indicator
+            Item {
+                anchors.fill: parent
+                anchors.margins: 5
+                Rectangle{
+                    id: mask2
+                    anchors.fill: parent
+                    radius: width / 4
+                    color: "#282A36"
+                    border.width: 5
+                    border.color: "#44475A"
+                }
+
+                Item {
+                    anchors.fill: mask2
+                    anchors.margins: 5
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: mask2
+                    }
+                    Button {
+						id: doorIndicator
+						QtObject{
+							property color colorDefault: "#D0D0D0"
+							property color colorMouseOver: "#E4E4E4"
+							property color colorPressed: "#7C7C7C"
+							id: internalDoor
+							property var dynamicColor:
+							if(doorIndicator.down){
+								doorIndicator.down ? colorPressed : colorDefault
+							} else {
+								doorIndicator.hovered ? colorMouseOver : colorDefault
+							}
+						}
+                        height: parent.height  //customSlider.value / customSlider.maxValue
+                        width: parent.width
+						background: Rectangle {
+							color: internalDoor.dynamicColor
+						}
+                    }
+					Image {
+                        id: icon2
+                        anchors.fill: parent
+                        source: "../../images/svg_images/door.png"
+                    }
+                }
+
+            }
+
+        }
+    }
+
+	Rectangle {
+    	width: 400
+        height: 75
+        anchors.top : parent.top
+        anchors.topMargin: 540
+        anchors.left : parent.left
+        anchors.leftMargin: 250
+        visible: true
+        color: "#00000000"
+		id:gauge4
+		Rectangle {
+            color: "#232323"
+            width: 400
+            height: 75
+            anchors.centerIn: parent
+
+        }
+        /// Outer Dial
+        Rectangle {
+            anchors.fill: parent
+            color: "transparent"
+            border.color: "#fefefe"
+            border.width: 4
+            //radius: width / 2
+        }
+
+		Rectangle {
+			anchors.left : parent.left
+			anchors.leftMargin: 15
+			y: 10
+			width: 0.26*parent.width
+			height: 0.13*parent.width
+			color: "#00000000"
+			Button {
+				id: reverse
+				QtObject{
+					property color colorDefault: "#CBCBCB"
+					property color colorMouseOver: "#5F5F5F"
+					property color colorPressed: "#707070"
+					id: internalReverse
+					property var dynamicColor:
+					if(reverse.down){
+						reverse.down ? colorPressed : colorDefault
+					} else {
+						reverse.hovered ? colorMouseOver : colorDefault
+					}
+				}
+				anchors.left : parent.left
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				implicitWidth: 60
+				implicitHeight: 50
+					x: 400
+					y: 100
+					background: Rectangle {
+						color: internalReverse.dynamicColor
+				}
+
+				Text {
+					anchors.horizontalCenter: parent.horizontalCenter
+					y: 10
+					text: "R"
+					font.family: "Helvetica"
+					font.pointSize: Math.max(6, parent.width * 0.2)
+					color: "#FE2D00"
+				}
+			}
+
+		}
+
+		Rectangle {
+			anchors.left : parent.left
+			anchors.leftMargin: 150
+			y: 10
+			width: 0.26*parent.width
+			height: 0.13*parent.width
+			color: "#00000000"
+			Button {
+				id: neutral
+				QtObject{
+					property color colorDefault: "#CBCBCB"
+					property color colorMouseOver: "#5F5F5F"
+					property color colorPressed: "#707070"
+					id: internalNeutral
+					property var dynamicColor:
+					if(neutral.down){
+						neutral.down ? colorPressed : colorDefault
+					} else {
+						neutral.hovered ? colorMouseOver : colorDefault
+					}
+				}
+				anchors.left : parent.left
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				implicitWidth: 60
+				implicitHeight: 50
+					x: 600
+					y: 100
+					background: Rectangle {
+						color: internalNeutral.dynamicColor
+				}
+
+				Text {
+					anchors.horizontalCenter: parent.horizontalCenter
+					y: 10
+					text: "N"
+					font.family: "Helvetica"
+					font.pointSize: Math.max(6, parent.width * 0.2)
+					color: "#FE2D00"
+				}
+			}
+		}
+
+		Rectangle {
+			anchors.left : parent.left
+			anchors.leftMargin: 280
+			y: 10
+			width: 0.26*parent.width
+			height: 0.13*parent.width
+			Button {
+				id: drive
+				QtObject{
+					property color colorDefault: "#CBCBCB"
+					property color colorMouseOver: "#5F5F5F"
+					property color colorPressed: "#707070"
+					id: internalDrive
+					property var dynamicColor:
+					if(drive.down){
+						drive.down ? colorPressed : colorDefault
+					} else {
+						drive.hovered ? colorMouseOver : colorDefault
+					}
+				}
+				anchors.left : parent.left
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
+				implicitWidth: 60
+				implicitHeight: 50
+					x: 600
+					y: 100
+					background: Rectangle {
+						color: internalDrive.dynamicColor
+				}
+
+				Text {
+					anchors.horizontalCenter: parent.horizontalCenter
+					y: 10
+					text: "D"
+					font.family: "Helvetica"
+					font.pointSize: Math.max(6, parent.width * 0.2)
+					color: "#FE2D00"
+				}
+			}
+		}
+    }
+
+	Label {
+        text: "Gear Switch"
+        color: "#00A5FF"
+        font.pointSize: 16
+        anchors.bottom: gauge4.top
+    	anchors.bottomMargin: 15
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+}
 	//
 	Timer{
 		id:tmgauge
@@ -1106,10 +1017,9 @@ Item {
 		onTriggered: {
 			gauge1.value = backend.get_adc1()/10
 			gauge2.value = backend.get_adc2()/5
-			gauge3.value = backend.get_adc3()/5
-			slider.value = backend.get_adc4()/85
-			progressIndicator.value = backend.get_adc5()/10
-			customSlider.value = backend.get_adc6()
+			progressIndicator.value = 10//backend.get_adc5()/10
+			//gauge3.value = backend.get_adc3()/5
+			//slider.value = backend.get_adc4()/85
 		}
 	}
 	//
@@ -1124,4 +1034,3 @@ Item {
         //}
 	}
 }
-

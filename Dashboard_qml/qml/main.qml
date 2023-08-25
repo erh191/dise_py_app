@@ -142,7 +142,7 @@ Window {
                     Label {
                         id: labelTopInfo
                         color: "#B0B0B0"
-                        text: qsTr("MONITOR SYS FOR ARDUINO MEGA")
+                        text: qsTr("EMBEDDED SYSTEMS")
                         font.bold: true
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -169,7 +169,7 @@ Window {
                     Label {
                         id: labelRightInfo
                         color: "#B0B0B0"
-                        text: qsTr("| WELLCOME")
+                        text: qsTr("| WELCOME")
                         anchors.right: parent.right
                         font.bold: true
                         anchors.top: parent.top
@@ -205,7 +205,7 @@ Window {
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
-                        source: "../images/svg_images/chip.png"
+                        source: "../images/svg_images/car.png"
                         anchors.bottomMargin: 0
                         anchors.leftMargin: 5
                         anchors.topMargin: 0
@@ -215,7 +215,7 @@ Window {
                     Label {
                         id: label
                         color: "#00A5FF"
-                        text: qsTr("DASHBOARD CONTROL   QML")
+                        text: qsTr("DIGITAL CLUSTER")
                         anchors.left: iconApp.right
                         anchors.right: parent.right
                         anchors.top: parent.top
@@ -360,50 +360,6 @@ Window {
                         anchors.topMargin: 0
 
                         LeftMenuBtn {
-                            id: btnHome
-                            width: leftMenu.width
-                            text: "<font color='#b0b0b0'>" + "Digital Out" + "</font>"
-                            font.bold: true
-                            font.pointSize: 12
-                            btnIconSource: "../images/svg_images/cil-touch-app.svg"
-                            //isActiveMenu: true
-                            onClicked: {
-                                btnHome.isActiveMenu = true
-                                btnOpen.isActiveMenu = false
-                                btnSave.isActiveMenu = false
-                                btnPwm.isActiveMenu = false
-                                btnChart.isActiveMenu = false
-                                btnOthers.isActiveMenu = false
-                                btnSettings.isActiveMenu = false
-                                backend.setPage("OUTPUTS")
-                                stackView.push(Qt.resolvedUrl(
-                                                   "pages/outputPage.qml"))
-                            }
-                        }
-
-                        LeftMenuBtn {
-                            id: btnOpen
-                            width: leftMenu.width
-                            text: "<font color='#b0b0b0'>" + "Digital In" + "</font>"
-                            font.bold: true
-                            font.pointSize: 12
-                            btnIconSource: "../images/svg_images/cil-sun.svg"
-
-                            onClicked: {
-                                btnHome.isActiveMenu = false
-                                btnOpen.isActiveMenu = true
-                                btnSave.isActiveMenu = false
-                                btnPwm.isActiveMenu = false
-                                btnChart.isActiveMenu = false
-                                btnOthers.isActiveMenu = false
-                                btnSettings.isActiveMenu = false
-                                backend.setPage("INPUTS")
-                                stackView.push(Qt.resolvedUrl(
-                                                   "pages/inputPage.qml"))
-                            }
-                        }
-
-                        LeftMenuBtn {
                             id: btnSave
                             width: leftMenu.width
                             text: "<font color='#b0b0b0'>" + "Analog In" + "</font>"
@@ -412,79 +368,12 @@ Window {
                             btnIconSource: "../images/svg_images/cil-speedometer.svg"
 
                             onClicked: {
-                                btnHome.isActiveMenu = false
-                                btnOpen.isActiveMenu = false
+
                                 btnSave.isActiveMenu = true
-                                btnPwm.isActiveMenu = false
-                                btnChart.isActiveMenu = false
-                                btnOthers.isActiveMenu = false
                                 btnSettings.isActiveMenu = false
-                                backend.setPage("GAUGES")
+                                backend.setPage("DASHBOARD")
                                 stackView.push(Qt.resolvedUrl(
                                                    "pages/gaugePage.qml"))
-                            }
-                        }
-                        LeftMenuBtn {
-                            id: btnPwm
-                            width: leftMenu.width
-                            text: "<font color='#b0b0b0'>" + "PWM Out" + "</font>"
-                            font.bold: true
-                            font.pointSize: 12
-                            btnIconSource: "../images/svg_images/cil-equalizer.svg"
-
-                            onClicked: {
-                                btnHome.isActiveMenu = false
-                                btnOpen.isActiveMenu = false
-                                btnSave.isActiveMenu = false
-                                btnSettings.isActiveMenu = false
-                                btnPwm.isActiveMenu = true
-                                btnChart.isActiveMenu = false
-                                btnOthers.isActiveMenu = false
-                                backend.setPage("PWM OUT")
-                                stackView.push(Qt.resolvedUrl(
-                                                   "pages/pwmPage.qml"))
-                            }
-                        }
-                        LeftMenuBtn {
-                            id: btnChart
-                            width: leftMenu.width
-                            text: "<font color='#b0b0b0'>" + "Trends" + "</font>"
-                            font.bold: true
-                            font.pointSize: 12
-                            btnIconSource: "../images/svg_images/cil-chart-line.svg"
-
-                            onClicked: {
-                                btnHome.isActiveMenu = false
-                                btnOpen.isActiveMenu = false
-                                btnSave.isActiveMenu = false
-                                btnSettings.isActiveMenu = false
-                                btnPwm.isActiveMenu = false
-                                btnChart.isActiveMenu = true
-                                btnOthers.isActiveMenu = false
-                                backend.setPage("CHARTS")
-                                stackView.push(Qt.resolvedUrl(
-                                                   "pages/chartPage.qml"))
-                            }
-                        }
-                        LeftMenuBtn {
-                            id: btnOthers
-                            width: leftMenu.width
-                            text: "<font color='#b0b0b0'>" + "Others" + "</font>"
-                            font.bold: true
-                            font.pointSize: 12
-                            btnIconSource: "../images/svg_images/cil-fire.svg"
-
-                            onClicked: {
-                                btnHome.isActiveMenu = false
-                                btnOpen.isActiveMenu = false
-                                btnSave.isActiveMenu = false
-                                btnSettings.isActiveMenu = false
-                                btnPwm.isActiveMenu = false
-                                btnChart.isActiveMenu = false
-                                btnOthers.isActiveMenu = true
-                                backend.setPage("BONUS")
-                                stackView.push(Qt.resolvedUrl(
-                                                   "pages/bonusPage.qml"))
                             }
                         }
                     }
@@ -553,7 +442,7 @@ Window {
                     Label {
                         id: labelTopInfo1
                         color: "#B0B0B0"
-                        text: qsTr("By: JJGM")
+                        text: qsTr("By: ER/FM/LS/NH")
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top

@@ -18,7 +18,7 @@ Item {
 
 		Image {    
 			id: image    
-			source: "../../images/dash1.png"
+			source: "../../images/dash3.png"
 			height:parent.height
 			width:parent.width  
 			//fillMode: Image.PreserveAspectCrop    

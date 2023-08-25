@@ -472,7 +472,7 @@ Window {
                     Label {
                         id: labelTopInfo1
                         color: "#B0B0B0"
-                        text: qsTr("By: JJGM")
+                        text: qsTr("By: ER/FM/LS/NH")
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
