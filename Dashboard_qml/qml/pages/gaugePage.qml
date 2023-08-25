@@ -16,6 +16,7 @@ import "../controls"
 
 Item {
 	property int gear_status: 0
+	property int elights_status: 0
 
 	Rectangle {
 		id: rectangle
@@ -597,7 +598,7 @@ Item {
                     radius: width / 4
                     color: "#282A36"
                     border.width: 5
-                    border.color: "#44475A"
+					border.color: elights_status ==1 ? "#ff0000" : "#44475A"
                 }
 
                 Item {
@@ -617,11 +618,9 @@ Item {
 							property var dynamicColor:
 							if(lightsButton.down){
 								lightsButton.down ? colorPressed : colorDefault
-								print("PRES!!!!!!!!!!!!!!!!!11")
 								backend.setPinoutput(22,'L')
 							} else {
 								lightsButton.hovered ? colorMouseOver : colorDefault
-								print("RELEASE!!!!!!!!!!!!!!!!!")
 							}
 						}
                         height: parent.height
@@ -896,8 +895,7 @@ Item {
 			progressIndicator.value = backend.get_adc5()//RPMS
 			gauge2.value = progressIndicator.value/100
 			gear_status=backend.get_adc4()
-			//gauge3.value = backend.get_adc3()/5
-			//slider.value = backend.get_adc4()/85
+			elights_status=backend.get_din0()
 		}
 	}
 	//

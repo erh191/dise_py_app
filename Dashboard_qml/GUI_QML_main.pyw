@@ -270,9 +270,7 @@ class MainWindow(QObject):
 	@pyqtSlot('int','QString')
 	def setPinoutput(self, pin, value):
 		if self.comSerialok:
-			#self.ser.write(dataled.encode())
-			print("setpin_output")
-			self.ser.write(bytearray(b'\x70\x01\x00\x00\x01\x00\x00\x00\x10\x20\x30\x40\x50\x60\x70\x80\xFA\xFB'))
+			self.ser.write(bytearray(b'\x70\x01\x00\x00\x01\x00\x00\x00\x10\xFA\xFB'))
 		else :
 			pass
 			#print("Set PIN OUTPUT :", pin, value)
