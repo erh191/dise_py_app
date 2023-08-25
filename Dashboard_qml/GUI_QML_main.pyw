@@ -179,7 +179,7 @@ class MainWindow(QObject):
 		packet_received=0
 		index=0
 		print("waiting"+str(self.ser.in_waiting))
-		if self.comSerialok and self.ser.in_waiting>2:
+		if self.comSerialok and self.ser.in_waiting>=9:
 			data = self.ser.read(1)
 			while packet_received==0:
 				data = data + self.ser.read(1)
