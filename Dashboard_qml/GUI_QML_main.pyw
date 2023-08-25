@@ -197,27 +197,26 @@ class MainWindow(QObject):
 						can_id=data[3]*256+data[2]
 						#print("can_id="+str(can_id))
 						
-						can_dlc=data[6]
+						can_dlc=data[4]
 						#print("can_dlc="+str(can_dlc))
 
-						can_data_index=10
+						can_data_index=5
 						can_data=data[can_data_index:can_data_index+can_dlc]
 						#print("can_data="+str(can_data))
 
 						if can_id==CAN_ID_EMERGENCY_LIGHTS:
-							#print("CAN_ID_EMERGENCY_LIGHTS")
 							Din0=can_data[0]
 							self.digitalsIn0 = Din0&1
+							#print("CAN_ID_EMERGENCY_LIGHTS= "+ str(self.digitalsIn0))
 
 						if can_id==CAN_ID_MOTOR_PULSES:		
-							#print("CAN_ID_MOTOR_PULSES")
 							pulses=can_data[1]*256+can_data[0]
 							self.adc5 = pulses
 							self.adc5 = self.adc5 *15
-							#print("pulses="+str(self.adc5))
+							#print("CAN_ID_MOTOR_PULSES= "+str(self.adc5))
 
 						if can_id==CAN_ID_DIGITAL_INPUTS:
-							print("CAN_ID_DIGITAL_INPUTS")
+							#print("CAN_ID_DIGITAL_INPUTS")
 							ignition=can_data[0]&0x01
 							door	=can_data[0]&0x02
 							
@@ -231,8 +230,8 @@ class MainWindow(QObject):
 							else:
 								self.digitalsIn2 = 0
 
-							print("ign: "+str(ignition))	
-							print("door: "+str(door))	
+							#print("ign: "+str(ignition))	
+							#print("door: "+str(door))	
 
 							gear=0
 							if can_data[1] ==1 :#REVERSE
@@ -274,8 +273,7 @@ class MainWindow(QObject):
 	@pyqtSlot('int','QString')
 	def setPinoutput(self, pin, value):
 		if self.comSerialok:
-			#self.ser.write(bytearray(b'\x70\x01\x00\x00\x01\x00\x00\x00\x10\xFA\xFB'))
-			self.ser.write(bytearray(b'\x01\xFA\xFB'))
+			self.ser.write(bytearray(b'\x01\xFA\xFB'))#Emergency lights toggle status
 		else :
 			pass
 			#print("Set PIN OUTPUT :", pin, value)
