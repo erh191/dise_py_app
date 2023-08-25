@@ -227,45 +227,19 @@ class MainWindow(QObject):
 						else:
 							self.digitalsIn2 = 0
 						gear=0
-						if can_data[1] ==1 :
+						if can_data[1] ==1 :#REVERSE
 							gear	=100
-						if can_data[1] ==2 :
-							gear	=400
-						
-						if can_data[1] ==4 :
+						if can_data[1] ==2 :#NEUTRAL
+							gear	=400						
+						if can_data[1] ==4 :#DRIVE
 							gear	=800
-						self.adc6 = gear
-						self.adc4 = gear
-						self.adc3 = gear
-						self.adc2 = gear
-						self.adc1 = gear
-					
+						self.adc4 = gear				
 
-						print("gear"+str(self.adc6))
-						
-							
-
-						
-
-
+						print("gear"+str(self.adc6))					
 					if can_id==CAN_ID_TEMPERATURE:
 						print("CAN_ID_TEMPERATURE")
-
-
-
-					self.adc1 = 10
-					self.adc2 = 88
-					self.adc3 = 30
-					self.adc4 = 40
-					self.adc6 = 60
-					self.adc7 = 70
-					self.adc8 = 80
-
-
-
-
-
-
+						self.adc1 = 30
+						self.adc2 = 40
 				else:
 					print("err2")	
 			else:
