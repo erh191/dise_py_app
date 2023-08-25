@@ -617,8 +617,10 @@ Item {
 							property var dynamicColor:
 							if(lightsButton.down){
 								lightsButton.down ? colorPressed : colorDefault
+								print("PRES!!!!!!!!!!!!!!!!!11")
 							} else {
 								lightsButton.hovered ? colorMouseOver : colorDefault
+								print("RELEASE!!!!!!!!!!!!!!!!!")
 							}
 						}
                         height: parent.height
