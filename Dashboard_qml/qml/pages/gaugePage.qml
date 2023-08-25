@@ -823,19 +823,19 @@ Item {
     }
 
 	Rectangle {
-    	width: 100
-        height: 100
+      width: 40
+        height: 40
         anchors.top : parent.top
-        anchors.topMargin: 500
+        anchors.topMargin: 460
         anchors.left : parent.left
-        anchors.leftMargin: 390
+        anchors.leftMargin: 420
         visible: true
         color: "#00000000"
-		id:gauge4
-		Rectangle {
+            id:gauge4
+            Rectangle {
             color: "#232323"
-            width: 100
-            height: 100
+            width: 50
+            height: 50
             anchors.centerIn: parent
 
         }
@@ -846,13 +846,13 @@ Item {
             border.color: "#fefefe"
             border.width: 4
         }
-		Label {
-		id: textain7
+            Label {
+            id: textain7
         text: gear_status ==1 ? "R" : gear_status ==2 ? "N":gear_status ==4 ? "D":"E"
         color: "#00A5FF"
-        font.pointSize: Math.max(50, parent.width * 0.2)
-		anchors.horizontalCenter: parent.horizontalCenter
-    	}
+        font.pointSize: Math.max(20, parent.width * 0.2)
+            anchors.horizontalCenter: parent.horizontalCenter
+      }
     }
 }
 	//

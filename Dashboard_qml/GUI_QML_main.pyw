@@ -168,7 +168,7 @@ class MainWindow(QObject):
 	def iniSampler(self):
 		self.temporizador = QTimer()
 		self.temporizador.timeout.connect(self.readData)
-		self.temporizador.start(1)
+		self.temporizador.start(50)
 
 	
 	
@@ -178,7 +178,8 @@ class MainWindow(QObject):
 	def readData(self):
 		packet_received=0
 		index=0
-		if self.comSerialok:
+		print("waiting"+str(self.ser.in_waiting))
+		if self.comSerialok and self.ser.in_waiting>2:
 			data = self.ser.read(1)
 			while packet_received==0:
 				data = data + self.ser.read(1)
@@ -191,6 +192,9 @@ class MainWindow(QObject):
 							if data[index-2]==0xfa:
 								packet_received=1
 								#print("paquete recibido!!!!")
+			if	self.ser.in_waiting>=128:
+				self.ser.reset_input_buffer()
+				print("flush input serial bytes!!!!!!!!!!!!!!!!1")
 			if packet_received == 1:
 				if data[0]==0xfc:
 					if data[1]==0xfd:
