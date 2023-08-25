@@ -17,7 +17,8 @@ import "../controls"
 Item {
 	property int gear_status: 0
 	property int elights_status: 0
-
+	property int door_status: 0
+	property int engine_status:0
 	Rectangle {
 		id: rectangle
 		color: "#2c313c"
@@ -705,26 +706,14 @@ Item {
             }
             /// Outer Dial
             Rectangle {
+				border.color: engine_status ==1 ? "#ff0000" : "#44475A"
                 anchors.fill: parent
                 color: "transparent"
-                border.color: "#fefefe"
                 border.width: 4
                 radius: width / 2
             }
         }
 		Button {
-			QtObject{
-				property color colorDefault: "#232323"
-				property color colorMouseOver: "#5F5F5F"
-				property color colorPressed: "#707070"
-				id: internalEngine
-				property var dynamicColor:
-				if(engine.down){
-					engine.down ? colorPressed : colorDefault
-				} else {
-					engine.hovered ? colorMouseOver : colorDefault
-				}
-			}
 			id: engine
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.verticalCenter: parent.verticalCenter
@@ -737,7 +726,7 @@ Item {
                 height: width
                 radius: width / 2
                 anchors.centerIn: parent
-				color: internalEngine.dynamicColor
+				color: "#232323"
 			}
 		}
         Rectangle {
@@ -756,7 +745,6 @@ Item {
 				color: "#e5e5e5"
 			}
 			Text {
-				//anchors.horizontalCenter: parent.horizontalCenter
 				y: 20
 				text: "Engine"
 				font.family: "Helvetica"
@@ -804,7 +792,7 @@ Item {
                     radius: width / 4
                     color: "#282A36"
                     border.width: 5
-                    border.color: "#44475A"
+                    border.color: door_status ==1 ? "#ff0000" : "#44475A"
                 }
 
                 Item {
@@ -816,18 +804,6 @@ Item {
                     }
                     Button {
 						id: doorIndicator
-						QtObject{
-							property color colorDefault: "#D0D0D0"
-							property color colorMouseOver: "#E4E4E4"
-							property color colorPressed: "#7C7C7C"
-							id: internalDoor
-							property var dynamicColor:
-							if(doorIndicator.down){
-								doorIndicator.down ? colorPressed : colorDefault
-							} else {
-								doorIndicator.hovered ? colorMouseOver : colorDefault
-							}
-						}
                         height: parent.height  //customSlider.value / customSlider.maxValue
                         width: parent.width
 						background: Rectangle {
@@ -869,18 +845,15 @@ Item {
             color: "transparent"
             border.color: "#fefefe"
             border.width: 4
-        }	
-
+        }
 		Label {
 		id: textain7
         text: gear_status ==1 ? "R" : gear_status ==2 ? "N":gear_status ==4 ? "D":"E"
         color: "#00A5FF"
         font.pointSize: Math.max(50, parent.width * 0.2)
 		anchors.horizontalCenter: parent.horizontalCenter
-    	}		
+    	}
     }
-
-
 }
 	//
 	Timer{
@@ -890,16 +863,15 @@ Item {
 		running: true
 		onTriggered: {
 			gauge1.value = backend.get_adc1()//Temperatura motor
-			
 			progressIndicator.value = backend.get_adc5()//RPMS
 			gauge2.value = progressIndicator.value/100
 			gear_status=backend.get_adc4()
 			elights_status=backend.get_din0()
+			door_status=backend.get_din2()
+			engine_status=backend.get_din1()
 		}
 	}
 	//
-	
-	
 	Connections{
 		target: backend
 		//function onValueGauge(value){
