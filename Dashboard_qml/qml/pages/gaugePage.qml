@@ -15,6 +15,7 @@ import QtGraphicalEffects 1.0
 import "../controls"
 
 Item {
+	property int din6status: 0
 
 	Rectangle {
 		id: rectangle
@@ -1000,7 +1001,8 @@ Item {
     }
 
 	Label {
-        text: "Gear Switch"
+		id: textain7
+        text: din6status ==1 ? "OPEN" : "CLOSE"
         color: "#00A5FF"
         font.pointSize: 16
         anchors.bottom: gauge4.top
@@ -1019,6 +1021,7 @@ Item {
 			
 			progressIndicator.value = backend.get_adc5()//RPMS
 			gauge2.value = progressIndicator.value/100
+			din6status=1
 			//gauge3.value = backend.get_adc3()/5
 			//slider.value = backend.get_adc4()/85
 		}
