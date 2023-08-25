@@ -752,99 +752,17 @@ Item {
 				font.pointSize: Math.max(6, parent.width * 0.2)
 				color: "#e5e5e5"
 			}
-		}
-		Label {
-			text: "AI 4"
-			color: "#00A5FF"
-			font.pointSize: 16
-			anchors.bottom: slider.top
-			anchors.bottomMargin: 30
-			anchors.horizontalCenter: parent.horizontalCenter
-		}
-    }    
-	////////////////
-	Rectangle {
-        width: 200
-        height: 200
-        anchors.top : parent.top
-        anchors.topMargin: 300
-        anchors.left : parent.left
-        anchors.leftMargin: 310
-        visible: true
-        color: "#00000000"
-        CircularSlider {
-                id: progressIndicator
-                hideProgress: true
-                hideTrack: true
-                width: parent.width
-                height: parent.height
-
-                interactive: false
-                minValue: 0
-                maxValue: 100
-                value: 0.5//inputSlider.value
-                startAngle: 0
-                endAngle: 270
-                rotation: 225
-
-                Repeater {
-                    model: 72
-
-                    Rectangle {
-                        id: indicator
-                        width: 5
-                        height: 20
-                        radius: width / 2
-                        //color: indicator.angle > progressIndicator.angle ? "#16171C" : "#7CFF6E"
-                        color: indicator.angle > progressIndicator.endAngle ? "#00000000" : (indicator.angle > progressIndicator.angle ? "#282A36" : "#7CFF6E")
-                        readonly property real angle: index * 5
-                        transform: [
-                            Translate {
-                                x: progressIndicator.width / 2 - width / 2
-                            },
-                            Rotation {
-                                origin.x: progressIndicator.width / 2
-                                origin.y: progressIndicator.height / 2
-                                angle: indicator.angle
-                            }
-                        ]
-                    }
-                }
-                
-            }
-            Label {
-				anchors.centerIn: parent
-				font.pointSize: 20
-				color: "#FEFEFE"
-				text: Number((progressIndicator.value).toFixed(1)).toString().padStart(1, '0')
-				//text : indicator.angle
-           }
-           Rectangle {
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter 
-				//y: 220
-				width: 0.26*parent.width
-				height: 0.13*parent.width
-				color: "#00000000"
-				Text {
-					anchors.horizontalCenter: parent.horizontalCenter
-					y: 0.45*parent.width
-					text: "RPMS"
-					font.family: "Helvetica"
-					font.pointSize: Math.max(6, parent.width * 0.3)
-					color: "#e5e5e5"
-				}
+			Text {
+				//anchors.horizontalCenter: parent.horizontalCenter
+				y: 20
+				text: "Engine"
+				font.family: "Helvetica"
+				font.pointSize: Math.max(6, parent.width * 0.2)
+				color: "#e5e5e5"
 			}
-			Label {
-				text: "AI 5"
-				color: "#00A5FF"
-				font.pointSize: 16
-				anchors.bottom: progressIndicator.top
-				anchors.bottomMargin: 10
-				anchors.horizontalCenter: parent.horizontalCenter
-				}
-        }
-	/////////////////
+		}
+    }
+	/////////open door indicator////////
 	Rectangle {
         width: 75
         height: 75
@@ -1097,12 +1015,12 @@ Item {
 		repeat: true
 		running: true
 		onTriggered: {
-			gauge1.value = backend.get_adc1()/10
-			gauge2.value = backend.get_adc2()/5
-			gauge3.value = backend.get_adc3()/5
-			slider.value = backend.get_adc4()/85
-			progressIndicator.value = backend.get_adc5()/10
-			customSlider.value = backend.get_adc6()
+			gauge1.value = backend.get_adc1()//Temperatura motor
+			
+			progressIndicator.value = backend.get_adc5()//RPMS
+			gauge2.value = progressIndicator.value/100
+			//gauge3.value = backend.get_adc3()/5
+			//slider.value = backend.get_adc4()/85
 		}
 	}
 	//

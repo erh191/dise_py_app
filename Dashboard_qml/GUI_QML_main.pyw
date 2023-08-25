@@ -183,67 +183,77 @@ class MainWindow(QObject):
 			while packet_received==0:
 				data = data + self.ser.read(1)
 				index=index+1
-				if data[index-1]==0xfb:
-					if data[index-2]==0xfa:
-						packet_received=1
-						print("paquete recibido!!!!")
-
-			if data[0]==0xfc:
-				if data[1]==0xfd:
-					can_id=data[3]*256+data[2]
-					print("can_id="+str(can_id))
-					
-					can_dlc=data[6]
-					print("can_dlc="+str(can_dlc))
-
-					can_data_index=10
-					can_data=data[can_data_index:can_data_index+can_dlc]
-					print("can_data="+str(can_data))
-
-					if can_id==CAN_ID_EMERGENCY_LIGHTS:
-						print("CAN_ID_EMERGENCY_LIGHTS")
-						Din0=can_data[0]
-						self.digitalsIn0 = Din0&1
-
-					if can_id==CAN_ID_MOTOR_PULSES:		
-						print("CAN_ID_MOTOR_PULSES")
-						pulses=can_data[1]*256+can_data[0]
-						self.adc5 = pulses
-						self.adc5 = self.adc5 *15
-						print("pulses="+str(self.adc5))
-
-					if can_id==CAN_ID_DIGITAL_INPUTS:
-						print("CAN_ID_DIGITAL_INPUTS")
-						ignition=can_data[0]&0x02
-						door	=can_data[0]&0x01
+				if index >= 25:
+					packet_received=255
+				if data:
+					if index > 2:
+						if data[index-1]==0xfb:
+							if data[index-2]==0xfa:
+								packet_received=1
+								print("paquete recibido!!!!")
+			if packet_received == 1:
+				if data[0]==0xfc:
+					if data[1]==0xfd:
+						can_id=data[3]*256+data[2]
+						print("can_id="+str(can_id))
 						
-						if ignition:
-							self.digitalsIn1 = 1
-						else:
-							self.digitalsIn1 = 0
+						can_dlc=data[6]
+						print("can_dlc="+str(can_dlc))
 
-						if door:
-							self.digitalsIn2 = 1
-						else:
-							self.digitalsIn2 = 0
-						gear=0
-						if can_data[1] ==1 :#REVERSE
-							gear	=100
-						if can_data[1] ==2 :#NEUTRAL
-							gear	=400						
-						if can_data[1] ==4 :#DRIVE
-							gear	=800
-						self.adc4 = gear				
+						can_data_index=10
+						can_data=data[can_data_index:can_data_index+can_dlc]
+						print("can_data="+str(can_data))
 
-						print("gear"+str(self.adc6))					
-					if can_id==CAN_ID_TEMPERATURE:
-						print("CAN_ID_TEMPERATURE")
-						self.adc1 = 30
-						self.adc2 = 40
+						if can_id==CAN_ID_EMERGENCY_LIGHTS:
+							print("CAN_ID_EMERGENCY_LIGHTS")
+							Din0=can_data[0]
+							self.digitalsIn0 = Din0&1
+
+						if can_id==CAN_ID_MOTOR_PULSES:		
+							print("CAN_ID_MOTOR_PULSES")
+							pulses=can_data[1]*256+can_data[0]
+							self.adc5 = pulses
+							self.adc5 = self.adc5 *15
+							print("pulses="+str(self.adc5))
+
+						if can_id==CAN_ID_DIGITAL_INPUTS:
+							print("CAN_ID_DIGITAL_INPUTS")
+							ignition=can_data[0]&0x02
+							door	=can_data[0]&0x01
+							
+							if ignition:
+								self.digitalsIn1 = 1
+							else:
+								self.digitalsIn1 = 0
+
+							if door:
+								self.digitalsIn2 = 1
+							else:
+								self.digitalsIn2 = 0
+							gear=0
+							if can_data[1] ==1 :#REVERSE
+								gear	=100
+							if can_data[1] ==2 :#NEUTRAL
+								gear	=400						
+							if can_data[1] ==4 :#DRIVE
+								gear	=800
+							self.adc4 = gear				
+
+							print("gear"+str(self.adc6))					
+						if can_id==CAN_ID_TEMPERATURE:
+							print("CAN_ID_TEMPERATURE")
+							
+							motor_temp=can_data[1]
+							self.adc1 = motor_temp
+							print("motor_temp"+str(self.adc1))
+
+							external_temp=can_data[0]
+							self.adc2 = external_temp
+							print("external_temp"+str(self.adc2))
+					else:
+						print("err2")	
 				else:
-					print("err2")	
-			else:
-				print("err1")
+					print("err1")
 
 		
 
