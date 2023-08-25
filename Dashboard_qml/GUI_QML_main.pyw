@@ -18,6 +18,15 @@ import random
 import math
 import serial.tools.list_ports
 
+#RX CAN Messages ID's
+CAN_ID_EMERGENCY_LIGHTS	=	0x171
+CAN_ID_MOTOR_PULSES		=	0x120
+CAN_ID_DIGITAL_INPUTS	=	0x140
+CAN_ID_TEMPERATURE		=	0x180
+
+#TX CAN Messages ID's
+MSG_ELIGHTS_RX_ID		=	0x170
+
 ########################################################################
 ###### MAIN CLASS
 ########################################################################
@@ -130,8 +139,8 @@ class MainWindow(QObject):
 		baudrate = int(speed)
 		try: 
 			self.ser = serial.Serial(
-				port,
-				baudrate,
+				port="COM4",
+				baudrate=115200,
 				timeout=1,
 				parity=serial.PARITY_NONE,
 				stopbits=serial.STOPBITS_ONE,
@@ -159,57 +168,105 @@ class MainWindow(QObject):
 	def iniSampler(self):
 		self.temporizador = QTimer()
 		self.temporizador.timeout.connect(self.readData)
-		self.temporizador.start(200)
+		self.temporizador.start(1)
+
+	
 	
 	####################################################################
 	# READ DATA FROM ARDUINO, ANALOGS AIN  & DIGITALS IN.
 	####################################################################
 	def readData(self):
+		packet_received=0
+		index=0
+		if self.comSerialok:
+			data = self.ser.read(1)
+			while packet_received==0:
+				data = data + self.ser.read(1)
+				index=index+1
+				if data[index-1]==0xfb:
+					if data[index-2]==0xfa:
+						packet_received=1
+						print("paquete recibido!!!!")
+
+			if data[0]==0xfc:
+				if data[1]==0xfd:
+					can_id=data[3]*256+data[2]
+					print("can_id="+str(can_id))
+					
+					can_dlc=data[6]
+					print("can_dlc="+str(can_dlc))
+
+					can_data_index=10
+					can_data=data[can_data_index:can_data_index+can_dlc]
+					print("can_data="+str(can_data))
+
+					if can_id==CAN_ID_EMERGENCY_LIGHTS:
+						print("CAN_ID_EMERGENCY_LIGHTS")
+						Din0=can_data[0]
+						self.digitalsIn0 = Din0&1
+
+					if can_id==CAN_ID_MOTOR_PULSES:		
+						print("CAN_ID_MOTOR_PULSES")
+						pulses=can_data[1]*256+can_data[0]
+						self.adc5 = pulses
+						self.adc5 = self.adc5 *15
+						print("pulses="+str(self.adc5))
+
+					if can_id==CAN_ID_DIGITAL_INPUTS:
+						print("CAN_ID_DIGITAL_INPUTS")
+						ignition=can_data[0]&0x02
+						door	=can_data[0]&0x01
+						
+						if ignition:
+							self.digitalsIn1 = 1
+						else:
+							self.digitalsIn1 = 0
+
+						if door:
+							self.digitalsIn2 = 1
+						else:
+							self.digitalsIn2 = 0
+						gear=0
+						if can_data[1] ==1 :#REVERSE
+							gear	=100
+						if can_data[1] ==2 :#NEUTRAL
+							gear	=400						
+						if can_data[1] ==4 :#DRIVE
+							gear	=800
+						self.adc4 = gear				
+
+						print("gear"+str(self.adc6))					
+					if can_id==CAN_ID_TEMPERATURE:
+						print("CAN_ID_TEMPERATURE")
+						self.adc1 = 30
+						self.adc2 = 40
+				else:
+					print("err2")	
+			else:
+				print("err1")
+
+		
+
+	def readData1(self):
+		print("read data")
 		if self.comSerialok:
 			data = self.ser.read(1)
 			n = self.ser.inWaiting()
 			while n:
-				data = data + self.ser.read(n)
+				print("read="+str(self.ser.read(n)))
+				#data = data + self.ser.read(n)
 				n = self.ser.inWaiting()
-				####### READ ANALOGS INPUTS ARDUINO
-				st1=data[0]*256+data[1]
-				st2=data[2]*256+data[3]
-				st3=data[4]*256+data[5]
-				st4=data[6]*256+data[7]
-				st5=data[8]*256+data[9]
-				st6=data[10]*256+data[11]
-				st7=data[12]*256+data[13]
-				st8=data[14]*256+data[15]
-				#print (st1," ",st2," ",st3," ",st4)
-				self.adc1 = st1
-				self.adc2 = st2
-				self.adc3 = st3
-				self.adc4 = st4
-				self.adc5 = st5
-				self.adc6 = st6
-				self.adc7 = st7
-				self.adc8 = st8
-				
-				######## READ DIGITAL INPUTS ARDUINO
-				Din1=data[16]*256+data[17]
-				Din2=data[18]*256+data[19]
-				Din3=data[20]*256+data[21]
-				Din4=data[22]*256+data[23]
-				Din5=data[24]*256+data[25]
-				Din6=data[26]*256+data[27]
-				Din7=data[28]*256+data[29]
-				Din8=data[30]*256+data[31]
-				#print (Din1," ",Din2," ",Din3," ",Din4)
-
-				# check the bit 1 for true and 0 false
-				self.digitalsIn0 = Din1&1
-				self.digitalsIn1 = Din2&1
-				self.digitalsIn2 = Din3&1
-				self.digitalsIn3 = Din4&1
-				self.digitalsIn4 = Din5&1
-				self.digitalsIn5 = Din6&1
-				self.digitalsIn6 = Din7&1
-				self.digitalsIn7 = Din8&1
+				print("n="+str(n))
+			print("data"+str(data))
+			
+		self.adc1 = 10
+		self.adc2 = 88
+		self.adc3 = 30
+		self.adc4 = 40
+		self.adc5 = 4000
+		self.adc6 = 60
+		self.adc7 = 70
+		self.adc8 = 80
 	
 	####################################################################
 	# REFERENCE TIME FOR GRAPHICS : VOLATILE CHART
