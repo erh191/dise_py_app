@@ -618,6 +618,7 @@ Item {
 							if(lightsButton.down){
 								lightsButton.down ? colorPressed : colorDefault
 								print("PRES!!!!!!!!!!!!!!!!!11")
+								backend.setPinoutput(22,'L')
 							} else {
 								lightsButton.hovered ? colorMouseOver : colorDefault
 								print("RELEASE!!!!!!!!!!!!!!!!!")

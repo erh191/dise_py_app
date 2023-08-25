@@ -190,34 +190,34 @@ class MainWindow(QObject):
 						if data[index-1]==0xfb:
 							if data[index-2]==0xfa:
 								packet_received=1
-								print("paquete recibido!!!!")
+								#print("paquete recibido!!!!")
 			if packet_received == 1:
 				if data[0]==0xfc:
 					if data[1]==0xfd:
 						can_id=data[3]*256+data[2]
-						print("can_id="+str(can_id))
+						#print("can_id="+str(can_id))
 						
 						can_dlc=data[6]
-						print("can_dlc="+str(can_dlc))
+						#print("can_dlc="+str(can_dlc))
 
 						can_data_index=10
 						can_data=data[can_data_index:can_data_index+can_dlc]
-						print("can_data="+str(can_data))
+						#print("can_data="+str(can_data))
 
 						if can_id==CAN_ID_EMERGENCY_LIGHTS:
-							print("CAN_ID_EMERGENCY_LIGHTS")
+							#print("CAN_ID_EMERGENCY_LIGHTS")
 							Din0=can_data[0]
 							self.digitalsIn0 = Din0&1
 
 						if can_id==CAN_ID_MOTOR_PULSES:		
-							print("CAN_ID_MOTOR_PULSES")
+							#print("CAN_ID_MOTOR_PULSES")
 							pulses=can_data[1]*256+can_data[0]
 							self.adc5 = pulses
 							self.adc5 = self.adc5 *15
-							print("pulses="+str(self.adc5))
+							#print("pulses="+str(self.adc5))
 
 						if can_id==CAN_ID_DIGITAL_INPUTS:
-							print("CAN_ID_DIGITAL_INPUTS")
+							#print("CAN_ID_DIGITAL_INPUTS")
 							ignition=can_data[0]&0x02
 							door	=can_data[0]&0x01
 							
@@ -239,45 +239,21 @@ class MainWindow(QObject):
 								gear	=4
 							self.adc4 = gear				
 
-							print("gear"+str(self.adc6))					
+							#print("gear"+str(self.adc6))					
 						if can_id==CAN_ID_TEMPERATURE:
-							print("CAN_ID_TEMPERATURE")
+							#print("CAN_ID_TEMPERATURE")
 							
 							motor_temp=can_data[1]
 							self.adc1 = motor_temp
-							print("motor_temp"+str(self.adc1))
+							#print("motor_temp"+str(self.adc1))
 
 							external_temp=can_data[0]
 							self.adc2 = external_temp
-							print("external_temp"+str(self.adc2))
+							#print("external_temp"+str(self.adc2))
 					else:
 						print("err2")	
 				else:
 					print("err1")
-
-		
-
-	def readData1(self):
-		print("read data")
-		if self.comSerialok:
-			data = self.ser.read(1)
-			n = self.ser.inWaiting()
-			while n:
-				print("read="+str(self.ser.read(n)))
-				#data = data + self.ser.read(n)
-				n = self.ser.inWaiting()
-				print("n="+str(n))
-			print("data"+str(data))
-			
-		self.adc1 = 10
-		self.adc2 = 88
-		self.adc3 = 30
-		self.adc4 = 40
-		self.adc5 = 4000
-		self.adc6 = 60
-		self.adc7 = 70
-		self.adc8 = 80
-	
 	####################################################################
 	# REFERENCE TIME FOR GRAPHICS : VOLATILE CHART
 	####################################################################
@@ -293,10 +269,10 @@ class MainWindow(QObject):
 	####################################################################
 	@pyqtSlot('int','QString')
 	def setPinoutput(self, pin, value):
-		dataled=str(pin)+value
-		#print (dataled)
 		if self.comSerialok:
-			self.ser.write(dataled.encode())
+			#self.ser.write(dataled.encode())
+			print("setpin_output")
+			self.ser.write(bytearray(b'\x70\x01\x00\x00\x01\x00\x00\x00\x10\x20\x30\x40\x50\x60\x70\x80\xFA\xFB'))
 		else :
 			pass
 			#print("Set PIN OUTPUT :", pin, value)
